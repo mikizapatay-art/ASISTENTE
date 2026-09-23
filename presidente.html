@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Registrar actividad — Asistente de Aula</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/escudo.png">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<header class="encabezado">
+  <div class="encabezado-fila">
+    <img class="escudo" src="assets/escudo.png" alt="Escudo UE Héroes del Pacífico">
+    <div class="titulos">
+      <div class="kicker">4to "C" · presidente de curso</div>
+      <h1>👑 Registrar actividad</h1>
+    </div>
+    <a class="volver" href="index.html">← Menú</a>
+  </div>
+  <svg class="ola" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#EAF4FC" d="M0,32 C240,60 480,4 720,20 C960,36 1200,58 1440,26 L1440,60 L0,60 Z"></path>
+  </svg>
+</header>
+
+<div class="envoltorio">
+
+  <div class="panel">
+    <h2>Nueva actividad</h2>
+    <div class="form-actividad">
+      <label>Materia</label>
+      <select id="materia">
+        <option value="">Cargando materias...</option>
+      </select>
+
+      <label>Docente</label>
+      <input type="text" id="docente" readonly>
+
+      <label>Tipo de actividad</label>
+      <select id="tipo">
+        <option value="Examen">Examen</option>
+        <option value="Tarea">Tarea</option>
+        <option value="Salida">Salida / actividad especial</option>
+      </select>
+
+      <label>Título</label>
+      <input type="text" id="titulo" placeholder='Ej. "Examen del segundo trimestre"'>
+
+      <label>Descripción (opcional)</label>
+      <textarea id="descripcion" rows="2"></textarea>
+
+      <label>Fecha</label>
+      <input type="date" id="fecha">
+
+      <label>Hora (opcional)</label>
+      <input type="time" id="hora">
+
+      <button class="boton" id="btn-guardar" onclick="agregarActividad()">Guardar en la Sheet</button>
+    </div>
+
+    <div class="descarga" id="mensaje" style="border-style:solid;"></div>
+  </div>
+
+  <div class="calendario" id="calendario">Cargando calendario...</div>
+
+  <p class="pie">UE Héroes del Pacífico · Asistente de Aula 4to "C"</p>
+</div>
+
+<script src="config.js"></script>
+<script src="js/comun.js"></script>
+<script>
+  let materias = [];
+  let actividades = [];
+
+  async function iniciar() {
+    materias = await cargarMaterias();
+    actividades = await cargarActividades();
+
+    const selMateria = document.getElementById('materia');
+    selMateria.innerHTML = materias.length
+      ? materias.map(m => '<option value="' + m.materia + '">' + m.materia + '</option>').join('')
+      : '<option value="">No se pudo cargar la lista — revisa config.js</option>';
+    actualizarDocente();
+
+    iniciarCalendario('calendario', actividades);
+  }
+
+  function actualizarDocente() {
+    const materia = document.getElementById('materia').value;
+    const encontrada = materias.find(m => m.materia === materia);
+    document.getElementById('docente').value = encontrada ? encontrada.docente : '';
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('materia').addEventListener('change', actualizarDocente);
+  });
+
+  function mostrarMensaje(clase, html) {
+    const caja = document.getElementById('mensaje');
+    caja.style.display = 'block';
+    caja.className = 'descarga ' + clase;
+    caja.innerHTML = html;
+  }
+
+  async function agregarActividad() {
+    const datos = {
+      materia: document.getElementById('materia').value,
+      docente: document.getElementById('docente').value,
+      tipo: document.getElementById('tipo').value,
+      titulo: document.getElementById('titulo').value.trim(),
+      descripcion: document.getElementById('descripcion').value.trim(),
+      fecha: document.getElementById('fecha').value,
+      hora: document.getElementById('hora').value
+    };
+
+    if (!datos.materia || !datos.titulo || !datos.fecha) {
+      alert('Completa al menos Materia, Título y Fecha.');
+      return;
+    }
+
+    const boton = document.getElementById('btn-guardar');
+    boton.disabled = true;
+    boton.textContent = 'Guardando...';
+
+    try {
+      const resultado = await guardarActividad(datos);
+
+      if (resultado.conflicto) {
+        const otras = resultado.conflicto.map(a => a.materia + ' (' + a.docente + ')').join(', ');
+        mostrarMensaje('', '<strong style="color:#C4402B;">⚠️ Guardado, pero ojo:</strong> ese día ya hay examen de ' + otras + '. Avisa a los docentes.');
+      } else {
+        mostrarMensaje('', '<strong style="color:#16A085;">✅ Actividad guardada en la Sheet.</strong>');
+      }
+
+      document.getElementById('titulo').value = '';
+      document.getElementById('descripcion').value = '';
+
+      actividades = await cargarActividades();
+      iniciarCalendario('calendario', actividades);
+    } catch (err) {
+      mostrarMensaje('', '<strong style="color:#C4402B;">❌ No se pudo guardar.</strong> Revisa que la URL en config.js sea correcta y que la implementación de Apps Script esté activa.');
+    } finally {
+      boton.disabled = false;
+      boton.textContent = 'Guardar en la Sheet';
+    }
+  }
+
+  iniciar();
+</script>
+
+</body>
+</html>

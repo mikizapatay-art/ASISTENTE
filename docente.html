@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calendario del curso — Asistente de Aula</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/escudo.png">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<header class="encabezado">
+  <div class="encabezado-fila">
+    <img class="escudo" src="assets/escudo.png" alt="Escudo UE Héroes del Pacífico">
+    <div class="titulos">
+      <div class="kicker">4to "C" · vista docente</div>
+      <h1>🧑‍🏫 Calendario del curso</h1>
+    </div>
+    <a class="volver" href="index.html">← Menú</a>
+  </div>
+  <svg class="ola" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#EAF4FC" d="M0,32 C240,60 480,4 720,20 C960,36 1200,58 1440,26 L1440,60 L0,60 Z"></path>
+  </svg>
+</header>
+
+<div class="envoltorio">
+
+  <div class="panel panel-conflicto" id="panel-conflictos">
+    <h2>⚠️ Fechas con más de un examen</h2>
+    <p class="vacio">Revisando...</p>
+  </div>
+
+  <div class="calendario" id="calendario">Cargando calendario...</div>
+
+  <p class="pie">UE Héroes del Pacífico · Asistente de Aula 4to "C"</p>
+</div>
+
+<script src="config.js"></script>
+<script src="js/comun.js"></script>
+<script>
+  (async function () {
+    const actividades = await cargarActividades();
+
+    const conflictos = conflictosGlobales(actividades);
+    const panel = document.getElementById('panel-conflictos');
+    if (!conflictos.length) {
+      panel.className = 'panel panel-ok';
+      panel.innerHTML = '<h2>✅ Sin choques de fecha</h2><p class="vacio">Ningún día tiene más de un examen programado.</p>';
+    } else {
+      let html = '<h2>⚠️ Fechas con más de un examen</h2><ul class="lista-simple">';
+      conflictos.forEach(c => {
+        const materias = c.examenes.map(e => e.materia + ' (' + e.docente + ')').join(' y ');
+        html += '<li><strong>' + c.fecha + '</strong>: ' + materias + '</li>';
+      });
+      html += '</ul>';
+      panel.innerHTML = html;
+    }
+
+    iniciarCalendario('calendario', actividades);
+  })();
+</script>
+
+</body>
+</html>

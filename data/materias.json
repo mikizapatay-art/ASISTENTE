@@ -1,0 +1,54 @@
+[
+  {
+    "materia": "Artes Plásticas",
+    "docente": "Meruvia Rodriguez Maria Cristina Deissy"
+  },
+  {
+    "materia": "Biologia",
+    "docente": "Anagua Arroyo Maria Cristina"
+  },
+  {
+    "materia": "Ciencias Sociales",
+    "docente": "Chavez Usquiano Betzabe Velia"
+  },
+  {
+    "materia": "Computacion",
+    "docente": "Juan Victor Zapata Galdo"
+  },
+  {
+    "materia": "Cosmovisiones y Filosofía",
+    "docente": "Coaquira Huanca Miguel Alberto"
+  },
+  {
+    "materia": "Educación Física",
+    "docente": "Gutierrez Ibarra Felipe Fernando"
+  },
+  {
+    "materia": "Educación Musical",
+    "docente": "Anagua Arroyo Rosse Mary"
+  },
+  {
+    "materia": "Fisica",
+    "docente": "Huayta Mamani Crispin"
+  },
+  {
+    "materia": "Inglés",
+    "docente": "Paredes Callisaya Reyna Veronica"
+  },
+  {
+    "materia": "Lenguaje y Comunicación",
+    "docente": "Chambi Mamani Nelson Gonzalo"
+  },
+  {
+    "materia": "Matemática",
+    "docente": "Rodriguez Pacoricona Freddy Antonio"
+  },
+  {
+    "materia": "Quimica",
+    "docente": "Mamani Laura Carlos Mario"
+  },
+  {
+    "materia": "Religión y Valores",
+    "docente": "Leyes Puente Maria Nelly"
+  }
+]

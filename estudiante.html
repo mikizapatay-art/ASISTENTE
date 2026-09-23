@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mis actividades — Asistente de Aula</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/escudo.png">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<header class="encabezado">
+  <div class="encabezado-fila">
+    <img class="escudo" src="assets/escudo.png" alt="Escudo UE Héroes del Pacífico">
+    <div class="titulos">
+      <div class="kicker">4to "C" · vista estudiante</div>
+      <h1>🎓 Mis actividades</h1>
+    </div>
+    <a class="volver" href="index.html">← Menú</a>
+  </div>
+  <svg class="ola" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#EAF4FC" d="M0,32 C240,60 480,4 720,20 C960,36 1200,58 1440,26 L1440,60 L0,60 Z"></path>
+  </svg>
+</header>
+
+<div class="envoltorio">
+
+  <div class="panel panel-aviso" id="panel-proximas">
+    <h2>⏰ Lo que se viene pronto</h2>
+    <p class="vacio">Cargando...</p>
+  </div>
+
+  <div class="calendario" id="calendario">Cargando calendario...</div>
+
+  <p class="pie">UE Héroes del Pacífico · Asistente de Aula 4to "C"</p>
+</div>
+
+<script src="config.js"></script>
+<script src="js/comun.js"></script>
+<script>
+  (async function () {
+    const actividades = await cargarActividades();
+
+    const proximas = proximasActividades(actividades, 3);
+    const panel = document.getElementById('panel-proximas');
+    if (!proximas.length) {
+      panel.innerHTML = '<h2>⏰ Lo que se viene pronto</h2><p class="vacio">No hay nada en los próximos días. ¡A disfrutar! 🌊</p>';
+    } else {
+      let html = '<h2>⏰ Lo que se viene pronto</h2><ul class="lista-simple">';
+      proximas.forEach(a => {
+        html += '<li><strong>' + a.tipo + '</strong> de ' + a.materia + ': "' + a.titulo + '" — ' + a.fecha + (a.hora ? ' ' + a.hora : '') + '</li>';
+      });
+      html += '</ul>';
+      panel.innerHTML = html;
+    }
+
+    iniciarCalendario('calendario', actividades);
+  })();
+</script>
+
+</body>
+</html>
